@@ -5,7 +5,7 @@ import numpy as np
 face_cascade = cv2.CascadeClassifier(
     'cascade_files/haarcascade_frontalface_alt.xml')
 
-face_mask = cv2.imread('word.png')
+face_mask = cv2.imread('word2.PNG')
 h_mask, w_mask = face_mask.shape[:2]
 
 if face_cascade.empty():
@@ -24,10 +24,11 @@ while True:
     face_rects = face_cascade.detectMultiScale(gray, 1.3, 5)
     for (x, y, w, h) in face_rects:
         if h > 0 and w > 0:
-            x = int(x + 0.6*w)
-            y = int(y - 0.2*h)
-            w = int(0.8 * 2.5*w)
-            h = int(0.7 * 2*h)
+            x = int(x)  # x + 0.6*w
+            y = int(y+1.2*h)  # y - 0.2*h
+            w = int(1.3*w)  # 0.8 * 2.5*w
+            h = int(h)  # 0.7 * 2 * h
+
             # frame 얼굴에 맞춰서 자르기
             frame_roi = framed[y:y+h, x:x+w]
             # 마스크의 크기 조절

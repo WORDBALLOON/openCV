@@ -1,0 +1,76 @@
+  # resize할 비율 구하기
+    r = 200. / img.shape[1]
+    dim = (200, int(img.shape[0] * r))
+    # resize 하기
+    resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+
+ 
+ ##################################################################
+
+    ret, framed = cap.read()
+
+    w = int(0.8 * 2.5*w)
+    h = int(0.7 * 2*h)
+    x = int(x + 0.6*w)
+    y = int(y - 0.2*h)
+
+    # frame 얼굴에 맞춰서 자르기
+    frame_roi = framed[y:y+h, x:x+w]
+    # 마스크의 크기 조절
+    face_mask_small = cv2.resize(
+        face_mask, (w, h), interpolation=cv2.INTER_AREA)
+    # 그레이마스크
+    gray_mask = cv2.cvtColor(face_mask_small, cv2.COLOR_BGR2GRAY)
+    # 바탕이 검은색인 마스크를 만듦
+    ret, mask = cv2.threshold(
+        gray_mask, 240, 255, cv2.THRESH_BINARY_INV)
+    mask_inv = cv2.bitwise_not(mask)
+    masked_face = cv2.bitwise_and(
+        face_mask_small, face_mask_small, mask=mask)
+    masked_frame = cv2.bitwise_and(frame_roi, frame_roi, mask=mask_inv)
+    framed[y:y+h, x:x+w] = cv2.add(masked_face, masked_frame)
+    cv2.imshow('Face mask_inv', mask_inv)
+    cv2.imshow(' masked_face', masked_face)
+
+    ##################################################################
+
+
+     ################ 마스크 띄우기 ################
+        # frame 얼굴에 맞춰서 자르기
+        #framed = cap.read()
+        w = r - l
+        h = t - b
+        x = int(x + 0.6*w)
+        y = int(y - 0.2*h)
+        frame_roi = resized[y:y+h, x:x+w]
+        # 마스크의 크기 조절
+        face_mask_small = cv2.resize(
+            face_mask, (r, l), interpolation=cv2.INTER_AREA)
+        # 그레이마스크
+        gray_mask = cv2.cvtColor(face_mask_small, cv2.COLOR_BGR2GRAY)
+        # 바탕이 검은색인 마스크를 만듦
+        ret, mask = cv2.threshold(gray_mask, 240, 255, cv2.THRESH_BINARY_INV)
+        mask_inv = cv2.bitwise_not(mask)
+        masked_face = cv2.bitwise_and(
+            face_mask_small, face_mask_small, mask=mask)
+        masked_frame = cv2.bitwise_and(
+            frame_roi, frame_roi, mask=mask_inv)
+        resized[y:y+h, x:x+w] = cv2.add(masked_face, masked_frame)
+        cv2.imshow('Face mask_inv', mask_inv)
+        cv2.imshow(' masked_face', masked_face)
+        #################################################
+
+        ################################################################################################################
+        # STT로 얻어낸 문장 정보 받아오기
+        import data
+        import time
+       
+        data = data.makefile("video_us2.csv")
+        if (time.time == data['start_time'][3]):
+            while (time.time < data['time'][3]):
+                cv2.putText(resized, data['getPhraseText'][3], (l, t),
+                            cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 255, 0), 2)
+
+
+################################################################################################################
+
