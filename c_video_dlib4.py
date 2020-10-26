@@ -11,10 +11,10 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
 # 비디오 읽어오기
-video_path = 'video/Prisident_election.mp4'
+video_path = 'video/video_self2.mp4'
 cap = cv2.VideoCapture(video_path)
 # 자막 읽어오기
-data = data.makefile("sentence/Prisident_election.csv")  # 읽어올 파일
+data = data.makefile("sentence/pitapat_sentence.csv")  # 읽어올 파일
 # 자막 준비
 text = ""
 font = ImageFont.truetype("fonts/gulim.ttf", 20)
@@ -81,9 +81,7 @@ while True:
         for j in range(68):
             red_x, red_y = shape.part(j).x, shape.part(j).y
             cv2.circle(resized, (red_x, red_y), 1, (0, 0, 255), -1)
-        
-        x_left = 0
-        x_right = 0
+
         num = len(data)
         for n in range(0, num):
             # 자막이 해당 시간안에 들어오는지 터미널로 확인
@@ -92,17 +90,15 @@ while True:
             print(count)
             print(int(float(data['end'][n])) * fps)
             print("-------------------------")
-           
-           
 
-            # 자막이 해당 시간안에 들어오면
+             # 자막이 해당 시간안에 들어오면
             if int(float(data['start'][n])) * fps <= count & count < int(float(data['end'][n])) * fps:
                 text = data['textSplit'][n]
                 draw.text((10, 30), " "+text, font=font, fill=(0, 0, 0))
                 face_mask_small = np.array(mask_image)
 
                 # 말하고 있는지 판별하기
-                if (ratio < 50 and ratio > 3):
+                if (ratio > 0.25):
                     #시작시간부터 50개
                     if (count <= int(float(data['start'][n])) * fps + 30):
                         # x가 왼쪽인지 오른쪽인지 카운트
